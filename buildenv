@@ -33,7 +33,7 @@ zopen_check_results()
 END {
   print "actualFailures:" f+0
   print "totalTests:" c+0
-  print "expectedFailures:2"
+  print "expectedFailures:7"
 }
 ' $chk
 }
