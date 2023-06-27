@@ -42,3 +42,8 @@ zopen_append_to_env()
 {
   # echo envars outside of PATH, MANPATH, LIBPATH
 }
+
+zopen_get_version()
+{
+  cat src/version.cc | head -23 | tail -1 | cut -d'"' -f2
+}
