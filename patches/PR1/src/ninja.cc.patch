@@ -1,0 +1,13 @@
+diff --git a/src/ninja.cc b/src/ninja.cc
+index 9ae53de..8dcabe2 100644
+--- a/src/ninja.cc
++++ b/src/ninja.cc
+@@ -25,7 +25,7 @@
+ #include "getopt.h"
+ #include <direct.h>
+ #include <windows.h>
+-#elif defined(_AIX)
++#elif defined(_AIX) || defined(__MVS__)
+ #include "getopt.h"
+ #include <unistd.h>
+ #else

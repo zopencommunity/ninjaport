@@ -1,0 +1,13 @@
+diff --git a/src/getopt.c b/src/getopt.c
+index 861f07f..cba24d2 100644
+--- a/src/getopt.c
++++ b/src/getopt.c
+@@ -385,7 +385,7 @@ getopt_internal (int argc, char **argv, char *shortopts,
+     return optopt;
+ }
+ 
+-#ifndef _AIX
++#if !defined( _AIX) && !defined(__MVS__)
+ int
+ getopt (int argc, char **argv, char *optstring)
+ {

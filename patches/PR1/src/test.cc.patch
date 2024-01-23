@@ -1,0 +1,40 @@
+diff --git a/src/test.cc b/src/test.cc
+index 11b1c9e..a9d3016 100644
+--- a/src/test.cc
++++ b/src/test.cc
+@@ -28,6 +28,10 @@
+ #else
+ #include <unistd.h>
+ #endif
++#ifdef __MVS__
++#include <sys/stat.h>
++#endif
++
+ 
+ #include "build_log.h"
+ #include "graph.h"
+@@ -200,6 +204,7 @@ void ScopedTempDir::CreateAndEnter(const string& name) {
+   start_dir_ = GetSystemTempDir();
+   if (start_dir_.empty())
+     Fatal("couldn't get system temp dir");
++#ifndef __MVS__
+   if (chdir(start_dir_.c_str()) < 0)
+     Fatal("chdir: %s", strerror(errno));
+ 
+@@ -210,6 +215,16 @@ void ScopedTempDir::CreateAndEnter(const string& name) {
+   char* tempname = mkdtemp(name_template);
+   if (!tempname)
+     Fatal("mkdtemp: %s", strerror(errno));
++#else
++  char prefix[6];
++  strncpy(prefix,name.c_str(), name.size()>5?5:name.size());
++  prefix[5]='\0';
++  char *tempname = tempnam(start_dir_.c_str(), prefix);
++  if (!tempname)
++    Fatal("tempnam: %s", strerror(errno));
++  if (mkdir(tempname, 0777))
++    Fatal("mkdir: %s",  strerror(errno));
++#endif
+   temp_dir_name_ = tempname;
+ 
+   // chdir into the new temporary directory.
