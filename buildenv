@@ -2,7 +2,7 @@
 NINJA_VERSION="1.11.1"
 
 export ZOPEN_BUILD_LINE="DEV"
-export ZOPEN_DEV_URL="git@github.com:ninja-build/ninja.git"
+export ZOPEN_DEV_URL="https://github.com/ninja-build/ninja.git"
 export ZOPEN_DEPS="cmake make git zoslib"
 export ZOPEN_DEV_DEPS="cmake make git zoslib tar gzip"
 
