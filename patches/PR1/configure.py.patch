@@ -1,0 +1,108 @@
+diff --git a/configure.py b/configure.py
+index 09c5b28..fa29210 100755
+--- a/configure.py
++++ b/configure.py
+@@ -64,12 +64,14 @@ class Platform(object):
+             self._platform = 'os400'
+         elif self._platform.startswith('dragonfly'):
+             self._platform = 'dragonfly'
++        elif self._platform.startswith('zos'):
++            self._platform = 'zos'
+ 
+     @staticmethod
+     def known_platforms():
+       return ['linux', 'darwin', 'freebsd', 'openbsd', 'solaris', 'sunos5',
+               'mingw', 'msvc', 'gnukfreebsd', 'bitrig', 'netbsd', 'aix',
+-              'dragonfly']
++              'dragonfly', 'zos']
+ 
+     def platform(self):
+         return self._platform
+@@ -102,6 +104,9 @@ class Platform(object):
+     def is_os400_pase(self):
+         return self._platform == 'os400' or os.uname().sysname.startswith('OS400')
+ 
++    def is_zos(self):
++        return self._platform == 'zos'
++
+     def uses_usr_local(self):
+         return self._platform in ('freebsd', 'openbsd', 'bitrig', 'dragonfly', 'netbsd')
+ 
+@@ -269,7 +274,11 @@ if configure_env:
+     n.variable('configure_env', config_str + '$ ')
+ n.newline()
+ 
+-CXX = configure_env.get('CXX', 'c++')
++if platform.is_zos():
++    CXX = configure_env.get('CXX', 'xlclang++')
++else:
++    CXX = configure_env.get('CXX', 'c++')
++
+ objext = '.o'
+ if platform.is_msvc():
+     CXX = 'cl'
+@@ -344,6 +353,21 @@ if platform.is_msvc():
+     if not options.debug:
+         cflags += ['/Ox', '/DNDEBUG', '/GL']
+         ldflags += ['/LTCG', '/OPT:REF', '/OPT:ICF']
++elif platform.is_zos():
++    cflags = ['-Wall', '-Wextra',
++       '-Wno-deprecated',
++       '-Wno-missing-field-initializers',
++       '-Wno-unused-parameter',
++       '-+','-qascii',
++       '-qnortti',
++       '-qnoeh',
++       '-DNINJA_PYTHON="%s"' % options.with_python]
++    if options.debug:
++       cflags += ['-g', '-D_GLIBCXX_DEBUG', '-D_GLIBCXX_DEBUG_PEDANTIC']
++       cflags.remove('-qnortti')  # Needed for above pedanticness.
++    else:
++       cflags += ['-O2', '-DNDEBUG']
++    ldflags = ['-L$builddir']
+ else:
+     cflags = ['-g', '-Wall', '-Wextra',
+               '-Wno-deprecated',
+@@ -391,6 +415,8 @@ elif platform.is_aix():
+     cflags.remove('-fvisibility=hidden')
+ elif platform.is_msvc():
+     pass
++elif platform.is_zos():
++    pass
+ else:
+     if options.profile == 'gmon':
+         cflags.append('-pg')
+@@ -436,6 +462,12 @@ if platform.is_msvc():
+         description='CXX $out',
+         deps='msvc'  # /showIncludes is included in $cflags.
+     )
++elif platform.is_zos():
++    n.rule('cxx',
++        command='$cxx -qmakedep=gcc -MF $out.d $cflags -c $in -o $out',
++        depfile='$out.d',
++        deps='gcc',
++        description='CXX $out')
+ else:
+     n.rule('cxx',
+         command='$cxx -MMD -MT $out -MF $out.d $cflags -c $in -o $out',
+@@ -486,7 +518,10 @@ if platform.supports_ninja_browse():
+ n.comment('the depfile parser and ninja lexers are generated using re2c.')
+ def has_re2c():
+     try:
+-        proc = subprocess.Popen(['re2c', '-V'], stdout=subprocess.PIPE)
++        if platform.is_zos():
++            proc = subprocess.Popen(['re2c', '-V'], stdout=subprocess.DEVNULL)
++        else:
++            proc = subprocess.Popen(['re2c', '-V'], stdout=subprocess.PIPE)
+         return int(proc.communicate()[0], 10) >= 1503
+     except OSError:
+         return False
+@@ -556,6 +591,8 @@ else:
+     objs += cxx('subprocess-posix')
+ if platform.is_aix():
+     objs += cc('getopt')
++elif platform.is_zos():
++    objs += cc('getopt')
+ if platform.is_msvc():
+     ninja_lib = n.build(built('ninja.lib'), 'ar', objs)
+ else:

@@ -1,0 +1,13 @@
+diff --git a/src/manifest_parser_perftest.cc b/src/manifest_parser_perftest.cc
+index 853d8e0..daf7a3d 100644
+--- a/src/manifest_parser_perftest.cc
++++ b/src/manifest_parser_perftest.cc
+@@ -25,7 +25,7 @@
+ #ifdef _WIN32
+ #include "getopt.h"
+ #include <direct.h>
+-#elif defined(_AIX)
++#elif defined(_AIX) || defined(__MVS__)
+ #include "getopt.h"
+ #include <unistd.h>
+ #else
