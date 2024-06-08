@@ -1,5 +1,5 @@
 # bump: ninja-version /NINJA_VERSION="(.*)"/ https://github.com/ninja-build/ninja.git|semver:^1
-NINJA_VERSION="1.11.1"
+NINJA_VERSION="1.12.1"
 
 export ZOPEN_BUILD_LINE="DEV"
 export ZOPEN_DEV_URL="https://github.com/ninja-build/ninja.git"
