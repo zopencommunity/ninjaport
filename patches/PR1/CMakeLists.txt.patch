@@ -1,8 +1,8 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 76bfb62..34263b9 100644
+index 90e3418..9a3a348 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -134,7 +134,7 @@ if(WIN32)
+@@ -160,7 +160,7 @@ if(WIN32)
  	set_source_files_properties(src/getopt.c PROPERTIES LANGUAGE CXX)
  else()
  	target_sources(libninja PRIVATE src/subprocess-posix.cc)
@@ -11,3 +11,14 @@ index 76bfb62..34263b9 100644
  		target_sources(libninja PRIVATE src/getopt.c)
  		# Build getopt.c, which can be compiled as either C or C++, as C++
  		# so that build environments which lack a C compiler, but have a C++
+@@ -292,8 +292,8 @@ if(BUILD_TESTING)
+     target_sources(ninja_test PRIVATE src/includes_normalize_test.cc src/msvc_helper_test.cc
+       windows/ninja.manifest)
+   endif()
+-  find_package(Threads REQUIRED)
+-  target_link_libraries(ninja_test PRIVATE libninja libninja-re2c GTest::gtest Threads::Threads)
++  #find_package(Threads REQUIRED)
++  target_link_libraries(ninja_test PRIVATE libninja libninja-re2c GTest::gtest)
+ 
+   foreach(perftest
+     build_log_perftest

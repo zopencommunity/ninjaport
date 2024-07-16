@@ -1,13 +1,15 @@
 diff --git a/src/disk_interface.cc b/src/disk_interface.cc
-index 7277c3e..d0c1501 100644
+index 8102a0e..859ca64 100644
 --- a/src/disk_interface.cc
 +++ b/src/disk_interface.cc
-@@ -214,6 +214,8 @@ TimeStamp RealDiskInterface::Stat(const string& path, string* err) const {
+@@ -232,7 +232,9 @@ TimeStamp RealDiskInterface::Stat(const string& path, string* err) const {
+   // that it doesn't exist.
+   if (st.st_mtime == 0)
      return 1;
- #if defined(_AIX)
+-#if defined(_AIX)
++#if defined(__MVS__)
++  return (int64_t)st.st_mtime * 1000000000LL;
++#elif defined(_AIX)
    return (int64_t)st.st_mtime * 1000000000LL + st.st_mtime_n;
-+#elif defined(__MVS__)
-+  return st.st_mtime;
  #elif defined(__APPLE__)
    return ((int64_t)st.st_mtimespec.tv_sec * 1000000000LL +
-           st.st_mtimespec.tv_nsec);
