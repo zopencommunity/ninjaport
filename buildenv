@@ -31,15 +31,13 @@ zopen_check_results()
   dir="$1"
   pfx="$2"
   chk="$1/$2_check.log"
-  awk '
-/^\*\*\* Failure/ { f++}
-/^\[/ { c++ }
-END {
-  print "actualFailures:" f+0
-  print "totalTests:" c+0
-  print "expectedFailures:7"
-}
-' $chk
+  totalTests="$(grep -c -E "\[ RUN" ${chk})"
+  success="$(grep -c -E "\[[ ]+ OK ]" ${chk})"
+  failures=$((totalTests-success))
+
+  echo "actualFailures:$failures"
+  echo "totalTests:$totalTests"
+  echo "expectedFailures:7"
 }
 
 zopen_append_to_env()
