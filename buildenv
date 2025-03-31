@@ -8,7 +8,7 @@ export ZOPEN_DEV_DEPS="cmake make git zoslib tar gzip getopt curl openssl"
 export ZOPEN_DEV_TAG="v${NINJA_VERSION}"
 
 export ZOPEN_CONFIGURE="cmake"
-export ZOPEN_CONFIGURE_OPTS=" -B ../build --install-prefix \$ZOPEN_INSTALL_DIR/ ."
+export ZOPEN_CONFIGURE_OPTS="-B ../build --install-prefix \$ZOPEN_INSTALL_DIR/ .  --trace-expand"
 
 export ZOPEN_MAKE="cmake"
 export ZOPEN_MAKE_OPTS=" --build ../build --parallel \$ZOPEN_NUM_JOBS --target all"

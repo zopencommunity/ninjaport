@@ -11,16 +11,6 @@ index eefa3f5..ce1b281 100644
    if (!f) {
      err->assign(strerror(errno));
      return -errno;
-@@ -704,6 +704,9 @@ int GetProcessorCount() {
-     }
-   }
-   return cpuCount;
-+#elif defined(__MVS__)
-+  // See "MVS Data Area" Book
-+  return ((char * __ptr32 * __ptr32 *)0)[4][165][53];
- #else
-   int cgroupCount = -1;
-   int schedCount = -1;
 @@ -812,6 +815,11 @@ double GetLoadAverage() {
    // Calculation taken from comment in libperfstats.h
    return double(cpu_stats.loadavg[0]) / double(1 << SBITS);
